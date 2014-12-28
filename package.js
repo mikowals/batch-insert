@@ -1,8 +1,8 @@
 Package.describe({
   summary: "Speed up multiple inserts by using MongoDB batch insert",
   version: "1.1.0",
-  name: "mikowals:batch-insert"
-  //git: " \* Fill me in! *\ "
+  name: "mikowals:batch-insert",
+  git: "https://github.com/mikowals/batch-insert.git"
 });
 
 Package.onUse( function( api ) {
