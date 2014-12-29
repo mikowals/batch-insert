@@ -15,7 +15,7 @@ The package creates a batchInsert() function on each collection instance.  It is
     //on server and client
     Data = new Meteor.Collection('data');
 
-    //must have an allow function to use on client without autopublish package.
+    //must have an allow function on server to use batchInsert() client without autopublish package.
     Data.allow({
       insert: function(){ return true };
     });
@@ -28,4 +28,4 @@ The package creates a batchInsert() function on each collection instance.  It is
       //called with err or res where res is array of created _id values
     });  
 
-Client side use requires setting allow / deny rules on the collection or being completely insecure with the autopublish package.  For server call no allow / deny rules are checked.  
+Client side security is managed with allow / deny rules on the collection.  For server call no allow / deny rules are checked.  
