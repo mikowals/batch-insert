@@ -1,3 +1,11 @@
+
+//Need LocalCollection._ObjectID for type checking
+var LocalCollection = {};
+LocalCollection._ObjectID = function (hexString) {
+  //random-based impl of Mongo ObjectID
+  self._str = Random.hexString(24);
+};
+
 Mongo.Collection.prototype._defineBatchInsert = function(){
   var self = this;
   console.log( 'defining batchInsert: ', self._name);
@@ -36,7 +44,13 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
 
     if ( this.connection ) {
       //method called by client so check allow / deny rules.
+
       docs.forEach( function( doc, ii ){
+
+        if (!( (doc && _type(doc) ) &&
+              !EJSON._isCustomType(doc))) {
+           throw new Error("Invalid modifier. Modifier must be an object.");
+        }
 
         // call user validators.
         // Any deny returns true means denied.
@@ -125,4 +139,38 @@ function docToValidate(validator, doc, generatedId) {
     ret = validator.transform(ret);
   }
   return ret;
+};
+
+function _type (v) {
+  if (typeof v === "number")
+    return 1;
+  if (typeof v === "string")
+    return 2;
+  if (typeof v === "boolean")
+    return 8;
+  if ( _.isArray(v) )
+    return 4;
+  if (v === null)
+    return 10;
+  if (v instanceof RegExp)
+    // note that typeof(/x/) === "object"
+    return 11;
+  if (typeof v === "function")
+    return 13;
+  if (v instanceof Date)
+    return 9;
+  if (EJSON.isBinary(v))
+    return 5;
+  if (v instanceof LocalCollection._ObjectID)
+    return 7;
+
+  return 3; // object
+
+    // XXX support some/all of these:
+    // 14, symbol
+    // 15, javascript code with scope
+    // 16, 18: 32-bit/64-bit integer
+    // 17, timestamp
+    // 255, minkey
+    // 127, maxkey
 };

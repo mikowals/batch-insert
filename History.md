@@ -1,3 +1,7 @@
+## v.1.1.1
+
+* mimic insert behaviour with check of LocalCollection.isPlainObject() before sending to db.
+
 ## v.1.1.0
 
 * make batchInsert() function for Mongo.Collection instances to mimic behaviour of insert().
