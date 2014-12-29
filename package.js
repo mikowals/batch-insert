@@ -1,5 +1,5 @@
 Package.describe({
-  summary: "Speed up multiple inserts by using MongoDB batch insert",
+  summary: "Insert multiple documents to mongo collection with one db call.",
   version: "1.1.0",
   name: "mikowals:batch-insert",
   git: "https://github.com/mikowals/batch-insert.git"
