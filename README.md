@@ -12,20 +12,21 @@ In your meteor app directory run:
 
 The package creates a batchInsert() function on each collection instance.  It is designed to work just like insert() but takes an array of objects to be inserted rather than a single object.
 
-    //on server and client
+    // on server and client
     Data = new Meteor.Collection('data');
 
-    //must have an allow function on server to use batchInsert() client without autopublish package.
+    // must have an allow function on server to use batchInsert() on client.
     Data.allow({
       insert: function(){ return true };
     });
 
-    //on server or client
-    var newIds = Data.batchInsert([{item: junk},{item: garbage}]);  //returns array of created _id values
+    // on server or client
+    var newIds = Data.batchInsert([{item: junk},{item: garbage}]);  // returns array of created _id values
 
-    //use asynchronously on client or server.  On client it also synchronously returns _ids just like Mongo.Collection.insert().
+    // use asynchronously on client or server.  
+    // On client it also synchronously returns _ids just like Mongo.Collection.insert().
     var moreIds = Data.batchInsert([{item: junk2},{item: garbage2}], function( err, res){
       //called with err or res where res is array of created _id values
     });  
 
-Client side security is managed with allow / deny rules on the collection.  For server call no allow / deny rules are checked.  
+Client side security is managed with allow / deny rules on the collection.  Their is no security on batchInsert() done from the server.  
