@@ -1,4 +1,4 @@
-## v.NEXT
+## v.1.1.0
 
 * make batchInsert() function for Mongo.Collection instances to mimic behaviour of insert().
 

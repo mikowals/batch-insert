@@ -14,28 +14,56 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
       }*/
     });
 
-    var generatedIds = docs.map( function( doc ){
-      if( !_.has( doc, '_id') ){
-        var newId = self._makeNewID();
-        return newId;
-      } else
-        return doc._id;
-    });
-
     // 'this' refers to method context
     if ( this.isSimulation){
-      //var _collection = Meteor.connection._mongo_livedata_collections[ self._name ];
-      return docs.map( function( doc, ii){
-        doc._id = generatedIds[ii];
+      return docs.map( function( doc ){
+        if (! doc._id)
+          doc._id = self._makeNewID();
         return self.insert( doc );
       });
 
     }
 
     //client returned so server code below
-    docs.forEach( function( doc, ii ){
-      doc._id = generatedIds[ ii ];
+    var userId = this.userId;
+
+    var generatedIds = docs.map( function( doc ){
+      if( !_.has( doc, '_id') ){
+        return self._makeNewID();
+      } else
+        return doc._id;
     });
+
+    if ( this.connection ) {
+      //method called by client so check allow / deny rules.
+      docs.forEach( function( doc, ii ){
+
+        // call user validators.
+        // Any deny returns true means denied.
+        if (_.any(self._validators.insert.deny, function(validator) {
+          return validator(userId, docToValidate(validator, doc, generatedIds[ii]));
+        })) {
+          throw new Meteor.Error(403, "Access denied");
+        }
+        // Any allow returns true means proceed. Throw error if they all fail.
+        if (_.all(self._validators.insert.allow, function(validator) {
+          return !validator(userId, docToValidate(validator, doc, generatedIds[ii]));
+        })) {
+          throw new Meteor.Error(403, "Access denied");
+        }
+
+        // If we generated an ID above, insert it now: after the validation, but
+        // before actually inserting.
+
+        doc._id = generatedIds[ii];
+      });
+    } else {
+      // method called by server
+      docs.forEach( function( doc, ii ){
+        doc._id = generatedIds[ii];
+      });
+    }
+
 
     var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
     var write = connection._maybeBeginWrite();
@@ -79,3 +107,22 @@ Mongo.Collection.prototype.constructor = Mongo.Collection;
 _.extend( Mongo.Collection, original);
 
 Meteor.Collection = Mongo.Collection;
+
+//function copied from MDG Mongo.Collection._validateInsert.  Needed in allow / deny checks.
+
+function docToValidate(validator, doc, generatedId) {
+  var ret = doc;
+  if (validator.transform) {
+    ret = EJSON.clone(doc);
+    // If you set a server-side transform on your collection, then you don't get
+    // to tell the difference between "client specified the ID" and "server
+    // generated the ID", because transforms expect to get _id.  If you want to
+    // do that check, you can do it with a specific
+    // `C.allow({insert: f, transform: null})` validator.
+    if (generatedId !== null) {
+      ret._id = generatedId;
+    }
+    ret = validator.transform(ret);
+  }
+  return ret;
+};
