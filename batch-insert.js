@@ -9,7 +9,10 @@ LocalCollection._ObjectID = function (hexString) {
 Mongo.Collection.prototype._defineBatchInsert = function(){
   var self = this;
 
+  // don't define a method for a null collection
+  if ( ! self._name ) return;
   var m = {};
+  
   m['/' + self._name + '/batchInsert'] = function( docs ){
     check( docs, [Object]);
 
@@ -32,7 +35,7 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
       } else
         return doc._id;
     });
-    
+
     docs.forEach( function( doc, ii ){
       if ( this.connection ) {
         //server method called by client so check allow / deny rules.

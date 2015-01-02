@@ -1,5 +1,8 @@
+## v.1.1.2.1
+* don't define batchInsert for a null collection.
+
 ## v.1.1.2
-* all inserts in a batch fail if any insert fails
+* all inserts in a batch fail if any insert fails.
 
 ## v.1.1.1
 
