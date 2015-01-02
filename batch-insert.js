@@ -8,19 +8,10 @@ LocalCollection._ObjectID = function (hexString) {
 
 Mongo.Collection.prototype._defineBatchInsert = function(){
   var self = this;
-  console.log( 'defining batchInsert: ', self._name);
+
   var m = {};
   m['/' + self._name + '/batchInsert'] = function( docs ){
     check( docs, [Object]);
-
-    docs.forEach( function ( doc ){
-      /*if (!(self._collection._isPlainObject( doc ) &&
-        !EJSON._isCustomType( doc ))) {
-
-          throw new Meteor.Error( 403, "Only plain objects may be inserted into MongoDB");
-
-      }*/
-    });
 
     // 'this' refers to method context
     if ( this.isSimulation){
@@ -34,24 +25,21 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
 
     //client returned so server code below
     var userId = this.userId;
-
+    var batchSecret = Random.secret( 8 );
     var generatedIds = docs.map( function( doc ){
       if( !_.has( doc, '_id') ){
         return self._makeNewID();
       } else
         return doc._id;
     });
-
-    if ( this.connection ) {
-      //method called by client so check allow / deny rules.
-
-      docs.forEach( function( doc, ii ){
-
+    
+    docs.forEach( function( doc, ii ){
+      if ( this.connection ) {
+        //server method called by client so check allow / deny rules.
         if (!( (doc && _type(doc) ) &&
               !EJSON._isCustomType(doc))) {
            throw new Error("Invalid modifier. Modifier must be an object.");
         }
-
         // call user validators.
         // Any deny returns true means denied.
         if (_.any(self._validators.insert.deny, function(validator) {
@@ -65,31 +53,31 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
         })) {
           throw new Meteor.Error(403, "Access denied");
         }
+      }
 
-        // If we generated an ID above, insert it now: after the validation, but
-        // before actually inserting.
-
-        doc._id = generatedIds[ii];
-      });
-    } else {
-      // method called by server
-      docs.forEach( function( doc, ii ){
-        doc._id = generatedIds[ii];
-      });
-    }
-
+      doc._id = generatedIds[ii];
+      doc.batch = batchSecret;
+    }, this );  // pass context of method into forEach
 
     var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
     var write = connection._maybeBeginWrite();
     var _collection = connection._getCollection( self._name );
     var wrappedInsert = Meteor.wrapAsync( _collection.insert ).bind( _collection );
-    var result = wrappedInsert( docs, {w:1} );
+    try {
+      var result = wrappedInsert( docs, {w:1} );
+      self.update( {batch: batchSecret}, {$unset: {batch: 1}}, {multi: true}, function(){ return });
+    } catch( e ){
+      var res = self.remove( {batch: batchSecret });
+      throw e;
+    }
+
     docs.forEach( function( doc ){
       Meteor.refresh( { collection: self._name, id: doc._id } );
     });
     write.committed();
-    return _.pluck( result , '_id');
 
+    return _.pluck( result , '_id');
+    //end of method definition
   };
 
   self._connection.methods( m );

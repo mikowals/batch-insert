@@ -1,3 +1,6 @@
+## v.1.1.2
+* all inserts in a batch fail if any insert fails
+
 ## v.1.1.1
 
 * mimic insert behaviour with check of LocalCollection.isPlainObject() before sending to db.

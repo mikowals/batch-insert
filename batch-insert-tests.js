@@ -3,16 +3,12 @@
 var col;
 Meteor.methods({
   testDefineBatchInsert: function( s ){
-
     if ( ! this.isSimulation ){
       var colServer = new Meteor.Collection( s );
       colServer.allow({
         insert: function(){ return true;}
       });
-      //colServer._defineBatchInsert();
     }
-    //console.log( Meteor );
-    console.log( 'finished' );
     return true;
   },
   testDefineBatchInsertDisallow: function( s ){
@@ -21,16 +17,10 @@ Meteor.methods({
       colServer2.allow({
         insert: function(){ return false;}
       });
-      //colServer._defineBatchInsert();
     }
-    //console.log( Meteor );
-    console.log( 'finished' );
     return true;
   }
 });
-
-
-
 
 if (Meteor.isClient ){
   var colName = Random.secret( 10 );
@@ -41,6 +31,7 @@ if (Meteor.isClient ){
     var ids = col.batchInsert( [{_id: "1", name: 'phil'}, {_id: "2", name: 'sally'}] );
     test.equal(ids, ["1","2"], 'client side batchInsert');
   });
+
 
   testAsyncMulti( 'mikowals:batch-insert - server _ids match client and allow rules manage security', [
     function( test, expect ) {
@@ -56,13 +47,28 @@ if (Meteor.isClient ){
       testCol.batchInsert( [{name: Random.secret(5) }, {name: Random.secret(5)}], expect( function( err, res){
         var expectedErr = JSON.stringify( {error:403,reason:"Access denied",message:"Access denied [403]",errorType:"Meteor.Error"} );
         var actualErr = JSON.stringify( err );
-        test.equal( actualErr, expectedErr , 'insert should fail based on allow rule');
+        console.log(res);
+        test.equal( err.reason, "Access denied" , 'insert should fail based on allow rule');
       }));
     }
 
   ]);
 } else {
-  //server tests
+  //server only tests
+  Tinytest.add( 'mikowals:batch-insert -  test error on duplicate id', function( test ){
+    //this test is a problem.  Individual docs can be inserted while others fail.
+    var newColName = Random.secret( 10 );
+    var col = new Meteor.Collection( newColName );
+    col.batchInsert( [{_id:1}, {_id:2}] );
+    function insertAgain(){
+      var err = col.batchInsert([ {_id:3, name: 'shouldFail'}, {_id:1} ]);
+    }
+    var msg = 'E11000 duplicate key error index: meteor.' + newColName + '.$_id_  dup key: { : 1 }';
+    test.throws( insertAgain, msg, 'insert should fail with duplicate ids');
+    test.equal( col.findOne( 3 ), undefined, 'all inserts should fail if one fails');
+    test.equal( col.find({batch:{$ne: null}}).count(), 0, 'batch marker should be removed from all docs');
+  }),
+
   Tinytest.add( 'mikowals:batch-insert - batch insert on server collection', function( test ){
     var serverCol = new Meteor.Collection(Random.secret( 10 ));
     serverCol.deny({
