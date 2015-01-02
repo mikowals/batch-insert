@@ -1,4 +1,4 @@
-## v.1.1.2.1
+## v.1.1.3
 * don't define batchInsert for a null collection.
 
 ## v.1.1.2
