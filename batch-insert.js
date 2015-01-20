@@ -12,7 +12,7 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
   // don't define a method for a null collection
   if ( ! self._name ) return;
   var m = {};
-  
+
   m['/' + self._name + '/batchInsert'] = function( docs ){
     check( docs, [Object]);
 
@@ -65,7 +65,7 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
     var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
     var write = connection._maybeBeginWrite();
     var _collection = connection._getCollection( self._name );
-    var wrappedInsert = Meteor.wrapAsync( _collection.insert ).bind( _collection );
+    var wrappedInsert = Meteor.wrapAsync( _collection.insert, _collection );
     try {
       var result = wrappedInsert( docs, {w:1} );
       self.update( {batch: batchSecret}, {$unset: {batch: 1}}, {multi: true}, function(){ return });
