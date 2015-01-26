@@ -29,7 +29,7 @@ The package creates a batchInsert() function on each collection instance.  It is
       //called with err or res where res is array of created _id values
     });  
 
-Client side security is managed with allow / deny rules on the collection.  Their is no security on batchInsert() done from the server.
+Client side security is managed with allow / deny rules on the collection.  There is no security on batchInsert() done from the server.
 
 ##Warnings
 
