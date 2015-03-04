@@ -1,4 +1,4 @@
-## v.1.1.4
+## v.1.1.5
 * proper handling for collections with ObjectIDs for _id
 * update mongodb driver
 
