@@ -5,11 +5,19 @@ Package.describe({
   git: "https://github.com/mikowals/batch-insert.git"
 });
 
+Npm.depends({
+  mongodb: "https://github.com/meteor/node-mongodb-native/tarball/cbd6220ee17c3178d20672b4a1df80f82f97d4c1"
+});
+
+Npm.strip({
+  mongodb: ["test/"]
+});
+
 Package.onUse( function( api ) {
   api.versionsFrom('METEOR@0.9.3');
-  api.use(['meteor','mongo', 'ddp','ejson','underscore']);
+  api.use(['mongo', 'ddp','ejson','underscore']);
   api.use('insecure', {weak: true});
-  api.imply(['meteor','mongo', 'ddp']);
+  api.imply(['mongo', 'ddp']);
   api.addFiles('batch-insert.js');
 });
 
