@@ -6,7 +6,7 @@ Package.describe({
 });
 
 Npm.depends({
-  mongodb: "https://github.com/meteor/node-mongodb-native/tarball/cbd6220ee17c3178d20672b4a1df80f82f97d4c1"
+  mongodb: "https://github.com/meteor/node-mongodb-native/tarball/634759e6326dc19a228df66ddb309285532f3b8a"
 });
 
 Npm.strip({

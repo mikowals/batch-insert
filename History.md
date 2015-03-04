@@ -1,5 +1,6 @@
 ## v.1.1.4
 * proper handling for collections with ObjectIDs for _id
+* update mongodb driver
 
 ## v.1.1.3
 * don't define batchInsert for a null collection.
