@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Insert multiple documents to mongo collection with one db call.",
-  version: "1.1.5",
+  version: "1.1.7",
   name: "mikowals:batch-insert",
   git: "https://github.com/mikowals/batch-insert.git"
 });
@@ -14,7 +14,7 @@ Npm.strip({
 });
 
 Package.onUse( function( api ) {
-  api.versionsFrom('METEOR@0.9.3');
+  api.versionsFrom('METEOR@1.0.4.1');
   api.use(['mongo', 'ddp','ejson','underscore']);
   api.use('insecure', {weak: true});
   api.imply(['mongo', 'ddp']);

@@ -158,10 +158,10 @@ Mongo.Collection.prototype._defineBatchInsert = function(){
 
     var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
     var write = connection._maybeBeginWrite();
-    var _collection = connection._getCollection( self._name );
+    var _collection = self.rawCollection();
     var wrappedInsert = Meteor.wrapAsync( _collection.insert, _collection );
 
-    var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {w:1} );
+    var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true} );
 
     docs.forEach( function( doc ){
       Meteor.refresh( { collection: self._name, id: doc._id } );
