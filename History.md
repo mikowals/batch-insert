@@ -1,3 +1,7 @@
+## v.1.1.9
+
+* make LocalCollection accessible from all package files
+
 ## v.1.1.8
 
 * batchInsert() called in server method ignores allow/deny rules

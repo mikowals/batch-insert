@@ -2,7 +2,7 @@
 var MongoDB = Npm.require('mongodb');
 
 //Need LocalCollection._ObjectID for type checking
-var LocalCollection = {};
+LocalCollection = {};
 LocalCollection._ObjectID = function (hexString) {
   //random-based impl of Mongo ObjectID
   self._str = Random.hexString(24);
@@ -103,7 +103,7 @@ var replaceTypes = function (document, atomTransformer) {
   return ret;
 };
 
-_batchInsert = function (collection, docs) {
+_batchInsert = function (collection, docs, cb) {
   var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
   var write = connection._maybeBeginWrite();
   var _collection = collection.rawCollection();
@@ -111,11 +111,15 @@ _batchInsert = function (collection, docs) {
 
   var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true} );
 
+  result = replaceTypes( result, replaceMongoAtomWithMeteor);
   docs.forEach( function( doc ){
     Meteor.refresh( { collection: collection._name, id: doc._id } );
   });
   write.committed();
-  return _.pluck( replaceTypes( result, replaceMongoAtomWithMeteor) , '_id');
+  if (cb)
+    cb(result)
+  else 
+    return _.pluck( result, '_id');
 }
 
 
