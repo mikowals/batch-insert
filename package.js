@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Insert multiple documents to mongo collection with one db call.",
-  version: "1.1.7",
+  version: "1.1.8",
   name: "mikowals:batch-insert",
   git: "https://github.com/mikowals/batch-insert.git"
 });
@@ -18,7 +18,8 @@ Package.onUse( function( api ) {
   api.use(['mongo', 'ddp','ejson','underscore']);
   api.use('insecure', {weak: true});
   api.imply(['mongo', 'ddp']);
-  api.addFiles('batch-insert.js');
+  api.addFiles('batch-insert-server.js','server');
+  api.addFiles('batch-insert-common.js');
 });
 
 Package.onTest( function( api ) {

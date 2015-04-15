@@ -1,14 +1,22 @@
-##
-v.1.1.7
+## v.1.1.8
+
+* batchInsert() called in server method ignores allow/deny rules
+
+## v.1.1.7
+
 * use .rawCollection() from meteor 1.0.4
+
 ## v.1.1.5
+
 * proper handling for collections with ObjectIDs for _id
 * update mongodb driver
 
 ## v.1.1.3
+
 * don't define batchInsert for a null collection.
 
 ## v.1.1.2
+
 * all inserts in a batch fail if any insert fails.
 
 ## v.1.1.1

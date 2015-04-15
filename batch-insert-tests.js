@@ -19,6 +19,15 @@ Meteor.methods({
       });
     }
     return true;
+  },
+  insertOnServer: function (name, docs) {
+    if (! this.isSimulation) {
+      var col = new Mongo.Collection(name);
+      col.deny({
+        insert: function (){return true}
+      });
+      return col.batchInsert(docs);
+    }   
   }
 });
 
@@ -31,7 +40,6 @@ if (Meteor.isClient ){
     var ids = col.batchInsert( [{_id: "1", name: 'phil'}, {_id: "2", name: 'sally'}] );
     test.equal(ids, ["1","2"], 'client side batchInsert');
   });
-
 
   testAsyncMulti( 'mikowals:batch-insert - server _ids match client and allow rules manage security', [
     function( test, expect ) {
@@ -47,8 +55,15 @@ if (Meteor.isClient ){
       testCol.batchInsert( [{name: Random.secret(5) }, {name: Random.secret(5)}], expect( function( err, res){
         var expectedErr = JSON.stringify( {error:403,reason:"Access denied",message:"Access denied [403]",errorType:"Meteor.Error"} );
         var actualErr = JSON.stringify( err );
-        console.log(res);
         test.equal( err.reason, "Access denied" , 'insert should fail based on allow rule');
+      }));
+    },
+    function (test, expect){
+      var colName = Random.secret(10);
+      var docs = [{name: Random.id(5)},{name: Random.id(5)}];
+      Meteor.apply('insertOnServer',[colName, docs],{wait: true}, expect(function(err, res){
+        test.equal(err, undefined);
+        test.equal(res.length, 2, 'two docs inserted successfully');
       }));
     }
 
@@ -65,8 +80,7 @@ if (Meteor.isClient ){
     }
     var msg = 'E11000 duplicate key error index: meteor.' + newColName + '.$_id_  dup key: { : 1 }';
     test.throws( insertAgain, msg, 'insert should fail with duplicate ids');
-    test.equal( col.findOne( 3 ), undefined, 'all inserts should fail if one fails');
-    test.equal( col.find({batch:{$ne: null}}).count(), 0, 'batch marker should be removed from all docs');
+    
   }),
 
   Tinytest.add( 'mikowals:batch-insert - batch insert on server collection', function( test ){
