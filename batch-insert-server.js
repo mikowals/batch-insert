@@ -1,5 +1,5 @@
 
-var MongoDB = Npm.require('mongodb');
+var MongoDB = NpmModuleMongodb;
 
 //Need LocalCollection._ObjectID for type checking
 LocalCollection = {};
@@ -103,23 +103,36 @@ var replaceTypes = function (document, atomTransformer) {
   return ret;
 };
 
+var wrapCB = function (cb) {
+  return Meteor.bindEnvironment(function(err, result){
+
+    if (err){
+      return cb(err);
+    }
+    result = replaceTypes( result, replaceMongoAtomWithMeteor);
+    result = _.pluck( result, '_id');
+    cb( null, result);
+  })
+
+};
+
 _batchInsert = function (collection, docs, cb) {
   var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
   var write = connection._maybeBeginWrite();
   var _collection = collection.rawCollection();
   var wrappedInsert = Meteor.wrapAsync( _collection.insert, _collection );
-
-  var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true} );
-
+  if (cb){
+    return wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo), {safe:true}, wrapCB(cb));
+  } 
+  var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true});
   result = replaceTypes( result, replaceMongoAtomWithMeteor);
+  result = _.pluck( result, '_id');
   docs.forEach( function( doc ){
     Meteor.refresh( { collection: collection._name, id: doc._id } );
   });
+   
   write.committed();
-  if (cb)
-    cb(result)
-  else 
-    return _.pluck( result, '_id');
+  return result;
 }
 
 

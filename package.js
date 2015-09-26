@@ -1,12 +1,8 @@
 Package.describe({
   summary: "Insert multiple documents to mongo collection with one db call.",
-  version: "1.1.9",
+  version: "1.1.12",
   name: "mikowals:batch-insert",
   git: "https://github.com/mikowals/batch-insert.git"
-});
-
-Npm.depends({
-  mongodb: "https://github.com/meteor/node-mongodb-native/tarball/634759e6326dc19a228df66ddb309285532f3b8a"
 });
 
 Npm.strip({
@@ -14,8 +10,9 @@ Npm.strip({
 });
 
 Package.onUse( function( api ) {
-  api.versionsFrom('METEOR@1.0.4.1');
-  api.use(['mongo', 'ddp','ejson','underscore']);
+  api.versionsFrom('METEOR@1.2');
+  api.use('npm-mongo', 'server');
+  api.use(['mongo', 'ddp','ejson','underscore', 'check']);
   api.use('insecure', {weak: true});
   api.imply(['mongo', 'ddp']);
   api.addFiles('batch-insert-server.js','server');

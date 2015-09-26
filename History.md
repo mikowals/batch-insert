@@ -1,6 +1,21 @@
+## v.1.1.12
+
+* release for meteor-1.2
+
+
+## v.1.1.11
+
+* release for meteor-1.2-rc.17
+
+## v.1.1.10
+
+* for meteor@1.2-rc.17
+* fix [#5](https://github.com/mikowals/batch-insert/issues/5) - bad error handling on server calls
+
 ## v.1.1.9
 
 * make LocalCollection accessible from all package files
+* make sure callbacks get called from server only calls
 
 ## v.1.1.8
 

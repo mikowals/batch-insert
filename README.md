@@ -31,6 +31,3 @@ The package creates a batchInsert() function on each collection instance.  It is
 
 Client side security is managed with allow / deny rules on the collection.  There is no security on batchInsert() done from the server.
 
-##Warnings
-
-Using oplog and doing bulk inserts to a published collection with many subscribers will run into [meteor bug #2869](https://github.com/meteor/meteor/issues/2668).  The problem exists for multiple inserts too but be aware of it.  

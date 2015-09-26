@@ -91,4 +91,25 @@ if (Meteor.isClient ){
     var ids = serverCol.batchInsert([{_id: 'a', name: 'earl'}, {_id: 'b', name: 'brian'}]);
     test.equal( ids, ['a','b'], 'should return given ids' );
   });
+  testAsyncMulti( 'mikowals:batch-insert - server callback gets error or result', [
+    function( test, expect ) {
+      var serverCol = new Meteor.Collection(Random.secret( 10 ));
+      serverCol.batchInsert( [{_id: "a", name:'john'}, {_id: "b", name: 'jerry'} ], expect( function( err, res ){
+        test.equal( ["a", "b"], res, 'server and client ids match');
+        //test.equal( col.findOne( ids[0] ).name, 'john', 'able to retrieve new obj from db');
+      }));
+    },
+    function (test, expect) {
+      //this test is a problem.  Individual docs can be inserted while others fail.
+      var newColName = Random.secret( 10 );
+      var col = new Meteor.Collection( newColName );
+      col.batchInsert( [{_id:1}, {_id:2}] );
+      
+      col.batchInsert([ {_id:3, name: 'shouldFail'}, {_id:1} ], expect(function (err, res){
+        //console.log(err.errmsg);
+        var msg = 'insertDocument :: caused by :: 11000 E11000 duplicate key error index: meteor.' + newColName + '.$_id_  dup key: { : 1 }';
+        test.equal(msg, err.message, 'insert should fail with duplicate ids');
+      }));
+    }
+  ]);
 }
