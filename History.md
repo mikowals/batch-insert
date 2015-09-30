@@ -1,3 +1,7 @@
+## v.1.1.13
+
+* make sure writefence concludes for async server calls
+
 ## v.1.1.12
 
 * release for meteor-1.2

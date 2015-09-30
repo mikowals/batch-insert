@@ -1,5 +1,6 @@
 
 var MongoDB = NpmModuleMongodb;
+var Future = Npm.require('fibers/future');
 
 //Need LocalCollection._ObjectID for type checking
 LocalCollection = {};

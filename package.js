@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Insert multiple documents to mongo collection with one db call.",
-  version: "1.1.12",
+  version: "1.1.13",
   name: "mikowals:batch-insert",
   git: "https://github.com/mikowals/batch-insert.git"
 });
