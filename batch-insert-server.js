@@ -120,19 +120,25 @@ _batchInsert = function (collection, docs, cb) {
   var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
   var write = connection._maybeBeginWrite();
   var _collection = collection.rawCollection();
-  var wrappedInsert = Meteor.wrapAsync( _collection.insert, _collection );
-  if (cb){
-    return wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo), {safe:true}, wrapCB(cb));
-  } 
-  var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true});
-  result = replaceTypes( result, replaceMongoAtomWithMeteor);
-  result = _.pluck( result, '_id');
-  docs.forEach( function( doc ){
-    Meteor.refresh( { collection: collection._name, id: doc._id } );
-  });
-   
-  write.committed();
-  return result;
+  var future = new Future;
+  _collection.insert( replaceTypes( docs, replaceMeteorAtomWithMongo), {safe:true}, future.resolver());
+  try {
+    var result = future.wait();
+    result = replaceTypes( result, replaceMongoAtomWithMeteor);
+    result = _.pluck( result, '_id');
+    docs.forEach( function( doc ){
+      Meteor.refresh( { collection: collection._name, id: doc._id } );
+    });
+    write.committed();
+    if (cb)
+      return cb(null, result);
+    return result;
+  } catch (e){
+    write.committed();
+    if (cb)
+      return cb(e);
+    throw (e);
+  }
 }
 
 
