@@ -21,10 +21,10 @@ html-tools@1.0.5
 htmljs@1.0.5
 id-map@1.0.4
 jquery@1.11.4
-local-test:mikowals:batch-insert@1.1.13
+local-test:keela:batch-insert@1.1.13
 logging@1.0.8
 meteor@1.1.9
-mikowals:batch-insert@1.1.13
+keela:batch-insert@1.1.13
 minimongo@1.0.10
 mongo@1.1.2
 mongo-id@1.0.1
