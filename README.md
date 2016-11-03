@@ -1,3 +1,7 @@
+##If you find this package useful consider commenting on the https://github.com/meteor/meteor/issues/1255 to get bulk insert support directly in Meteor core.
+
+
+
 #batch-insert
 
 Meteor package enabling mongo driver insert of multiple documents.
