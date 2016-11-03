@@ -78,9 +78,8 @@ if (Meteor.isClient ){
     function insertAgain(){
       var err = col.batchInsert([ {_id:3, name: 'shouldFail'}, {_id:1} ]);
     }
-    var msg = 'E11000 duplicate key error index: meteor.' + newColName + '.$_id_  dup key: { : 1 }';
+    var msg = 'E11000 duplicate key error collection: meteor.'+ newColName + ' index: _id_ dup key: { : 1 }';
     test.throws( insertAgain, msg, 'insert should fail with duplicate ids');
-    
   }),
 
   Tinytest.add( 'mikowals:batch-insert - batch insert on server collection', function( test ){
@@ -107,7 +106,7 @@ if (Meteor.isClient ){
       
       col.batchInsert([ {_id:3, name: 'shouldFail'}, {_id:1} ], expect(function (err, res){
         //console.log(err.errmsg);
-        var msg = 'insertDocument :: caused by :: 11000 E11000 duplicate key error index: meteor.' + newColName + '.$_id_  dup key: { : 1 }';
+        var msg = 'E11000 duplicate key error collection: meteor.' + newColName + ' index: _id_ dup key: { : 1 }';
         test.equal(msg, err.message, 'insert should fail with duplicate ids');
       }));
     }

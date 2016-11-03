@@ -103,14 +103,18 @@ var replaceTypes = function (document, atomTransformer) {
   return ret;
 };
 
+var getIdsFromMongoResult = function(res){
+  res = res.ops;
+  res = replaceTypes( res, replaceMongoAtomWithMeteor);
+  return _.pluck( res, '_id');
+}
+
 var wrapCB = function (cb) {
   return Meteor.bindEnvironment(function(err, result){
-
     if (err){
       return cb(err);
     }
-    result = replaceTypes( result, replaceMongoAtomWithMeteor);
-    result = _.pluck( result, '_id');
+    result = getIdsFromMongoResult(result)
     cb( null, result);
   })
 
@@ -120,13 +124,14 @@ _batchInsert = function (collection, docs, cb) {
   var connection = MongoInternals.defaultRemoteCollectionDriver().mongo;
   var write = connection._maybeBeginWrite();
   var _collection = collection.rawCollection();
-  var wrappedInsert = Meteor.wrapAsync( _collection.insert, _collection );
+  var wrappedInsert = Meteor.wrapAsync( _collection.insertMany, _collection );
   if (cb){
     return wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo), {safe:true}, wrapCB(cb));
   } 
+ 
   var result = wrappedInsert( replaceTypes( docs, replaceMeteorAtomWithMongo ), {safe:true});
-  result = replaceTypes( result, replaceMongoAtomWithMeteor);
-  result = _.pluck( result, '_id');
+  
+  result = getIdsFromMongoResult(result)
   docs.forEach( function( doc ){
     Meteor.refresh( { collection: collection._name, id: doc._id } );
   });
