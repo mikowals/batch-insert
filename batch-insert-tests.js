@@ -40,6 +40,9 @@ if (Meteor.isClient ){
     var ids = col.batchInsert( [{_id: "1", name: 'phil'}, {_id: "2", name: 'sally'}] );
     test.equal(ids, ["1","2"], 'client side batchInsert');
   });
+  Tinytest.add( 'mikowals:batch-insert - collection is instance of Mongo.Collection', function( test ){
+    test.instanceOf( col, Mongo.Collection);
+  });
 
   testAsyncMulti( 'mikowals:batch-insert - server _ids match client and allow rules manage security', [
     function( test, expect ) {
@@ -80,7 +83,14 @@ if (Meteor.isClient ){
     }
     var msg = 'E11000 duplicate key error collection: meteor.'+ newColName + ' index: _id_ dup key: { : 1 }';
     test.throws( insertAgain, msg, 'insert should fail with duplicate ids');
-  }),
+  });
+
+  Tinytest.add( 'mikowals:batch-insert -  collection is instance of Mongo.Collection', function( test ){
+    //this test is a problem.  Individual docs can be inserted while others fail.
+    var newColName = Random.secret( 10 );
+    var col = new Meteor.Collection( newColName );
+    test.instanceOf( col, Mongo.Collection);
+  });
 
   Tinytest.add( 'mikowals:batch-insert - batch insert on server collection', function( test ){
     var serverCol = new Meteor.Collection(Random.secret( 10 ));
