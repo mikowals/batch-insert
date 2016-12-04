@@ -1,3 +1,4 @@
+/* global Mongo */
 
 
 Mongo.Collection.prototype._defineBatchInsert = function(){
@@ -94,20 +95,19 @@ Mongo.Collection.prototype.batchInsert = function( /*args*/ ){
   return self._connection.apply( '/'+ self._name + '/batchInsert', args, {returnStubValue: true});
 };
 
-var original = Mongo.Collection;
-//_.extend ( original, Mongo.Collection );
+// Don't override ever Mongo.Collection constructor,
+// other packages often relies on something like 'instanceOf Mongo.Collection'
+ 
+var original = Mongo.Collection.prototype._defineMutationMethods;
 
-Mongo.Collection = function( name, options ){
-  original.call( this, name, options );
-  this._defineBatchInsert();
-};
+_.extend( Mongo.Collection, {
+    _defineMutationMethods: function() {
+        var result = original.apply(this, arguments);
+        this._defineBatchInsert();
+        return result;
+    }
+});
 
-Mongo.Collection.prototype = Object.create( original.prototype );
-Mongo.Collection.prototype.constructor = Mongo.Collection;
-
-_.extend( Mongo.Collection, original);
-
-Meteor.Collection = Mongo.Collection;
 
 //function copied from MDG Mongo.Collection._validateInsert.  Needed in allow / deny checks.
 
