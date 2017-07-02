@@ -94,7 +94,7 @@ Mongo.Collection.prototype.batchInsert = function( /*args*/ ){
   return self._connection.apply( '/'+ self._name + '/batchInsert', args, {returnStubValue: true});
 };
 
-Meteor.addCollectionExtension(function (name, options) {
+CollectionExtensions.addExtension(function (name, options) {
   this._defineBatchInsert();
 });
 
