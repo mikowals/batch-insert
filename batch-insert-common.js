@@ -94,18 +94,9 @@ Mongo.Collection.prototype.batchInsert = function( /*args*/ ){
   return self._connection.apply( '/'+ self._name + '/batchInsert', args, {returnStubValue: true});
 };
 
-var original = Mongo.Collection;
-//_.extend ( original, Mongo.Collection );
-
-Mongo.Collection = function( name, options ){
-  original.call( this, name, options );
+Meteor.addCollectionExtension(function (name, options) {
   this._defineBatchInsert();
-};
-
-Mongo.Collection.prototype = Object.create( original.prototype );
-Mongo.Collection.prototype.constructor = Mongo.Collection;
-
-_.extend( Mongo.Collection, original);
+});
 
 Meteor.Collection = Mongo.Collection;
 
