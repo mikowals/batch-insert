@@ -1,18 +1,18 @@
-##If you find this package useful consider commenting on the https://github.com/meteor/meteor/issues/1255 to get bulk insert support directly in Meteor core.
+## If you find this package useful consider commenting on the https://github.com/meteor/meteor/issues/1255 to get bulk insert support directly in Meteor core.
 
 
 
-#batch-insert
+# batch-insert
 
 Meteor package enabling mongo driver insert of multiple documents.
 
-#Installation
+# Installation
 
 In your meteor app directory run:
 
     meteor add mikowals:batch-insert
 
-#Usage
+# Usage
 
 The package creates a batchInsert() function on each collection instance.  It is designed to work just like insert() but takes an array of objects to be inserted rather than a single object.
 
