@@ -10,7 +10,7 @@ Npm.strip({
 });
 
 Package.onUse( function( api ) {
-  api.versionsFrom('METEOR@1.4.2');
+  api.versionsFrom('METEOR@1.7.0.5');
   api.use('npm-mongo', 'server');
   api.use(['mongo', 'ddp','ejson','underscore', 'check']);
   api.use('insecure', {weak: true});
