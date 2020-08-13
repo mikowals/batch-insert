@@ -22,5 +22,5 @@ Package.onUse( function( api ) {
 Package.onTest( function( api ) {
   api.use(['tinytest','test-helpers', 'random', 'mongo']);
   api.use('mikowals:batch-insert');
-  api.addFiles('batch-insert-tests.js');
+  api.mainModule('batch-insert-tests.js');
 });

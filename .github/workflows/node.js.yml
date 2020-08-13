@@ -16,4 +16,4 @@ jobs:
     - name: Install dependencies
       run: meteor npm install
     - name: Test
-      run: meteor npm test
+      run: meteor npm test-packages ./
