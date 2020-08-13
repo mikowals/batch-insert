@@ -15,5 +15,6 @@ jobs:
     - uses: meteorengineer/setup-meteor@v1
     - name: Install dependencies
       run: meteor npm install
+      run: meteor npm install -g spacejam
     - name: Test
-      run: meteor test-packages ./
+      run: spacejam test-packages mikowals:batch-insert
