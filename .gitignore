@@ -1,3 +1,4 @@
+.github*
 .meteor/local
 .meteor/meteorite
 .build*
