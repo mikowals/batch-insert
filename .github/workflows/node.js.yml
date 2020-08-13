@@ -1,26 +1,19 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Meteor CI
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Meteor.js environment
-      uses: meteorengineer/setup-meteor@v1.0.2
-    - run: meteor npm install
-    - run: meteor npm test
+    - uses: actions/checkout@v1
+    - uses: meteorengineer/setup-meteor@v1
+    - name: Install dependencies
+      run: meteor npm install
+    - name: Test
+      run: meteor npm test
