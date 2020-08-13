@@ -21,6 +21,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup Meteor.js environment
-      uses: meteorengineer/setup-meteor@v1.10.2
+      uses: meteorengineer/setup-meteor@v1.0.2
     - run: meteor npm install
     - run: meteor npm test
