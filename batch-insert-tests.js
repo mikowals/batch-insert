@@ -122,3 +122,14 @@ if (Meteor.isClient ){
     }
   ]);
 }
+
+Tinytest.add('instanceof - Meteor.Collection matches Mongo.Collection', function (test) {
+  var collectionName = 'foo' + test.id;
+  var Test = new Meteor.Collection(collectionName);
+  test.instanceOf(Test, Mongo.Collection);
+});
+
+Tinytest.add('instanceof - Meteor.users matches (Mongo/Meteor).Collection', function (test) {
+  test.instanceOf(Meteor.users, Mongo.Collection);
+  test.instanceOf(Meteor.users, Meteor.Collection);
+});
