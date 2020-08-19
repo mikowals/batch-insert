@@ -1,4 +1,4 @@
-## If you find this package useful consider commenting on the https://github.com/meteor/meteor/issues/1255 to get bulk insert support directly in Meteor core.
+## If you find this package useful consider commenting on the https://github.com/meteor/meteor-feature-requests/issues/15 to get bulk insert support directly in Meteor core.
 
 
 
