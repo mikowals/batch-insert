@@ -1,4 +1,6 @@
-.github*
 .meteor/local
 .meteor/meteorite
 .build*
+.DS_Store
+node_modules/
+test-proxy/packages/
