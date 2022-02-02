@@ -11,6 +11,10 @@ jobs:
   tests:
     name: tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        meteor: [ '2.3.7', '2.5.6', '2.6' ]
+    name: Meteor ${{ matrix.meteor }} sample
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -18,7 +22,7 @@ jobs:
       - name: Setup meteor
         uses: meteorengineer/setup-meteor@v1
         with:
-          meteor-release: "2.6"
+          meteor-release: ${{ matrix.meteor }}
 
       - name: cache dependencies
         uses: actions/cache@v1
