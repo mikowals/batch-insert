@@ -19,7 +19,7 @@ Package.onUse(function (api) {
   api.versionsFrom('METEOR@1.10.2')
 
   api.use('npm-mongo@3.7.0 || 4.3.1-rc260.2', 'server')
-  api.use(['ecmascript', 'mongo', 'ddp', 'ejson', 'underscore', 'check', 'lai:collection-extensions'])
+  api.use(['ecmascript', 'mongo', 'ddp', 'ejson', 'underscore', 'check', 'lai:collection-extensions@0.3.0'])
   api.use('insecure', { weak: true })
   api.imply(['mongo', 'ddp'])
   api.addFiles('batch-insert-server.js', 'server')
