@@ -30,6 +30,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - run: cd test-proxy && meteor update --release ${{matrix.meteor}}
       - run: cd test-proxy && meteor npm ci
       - run: cd test-proxy && meteor npm run lint
       - run: cd test-proxy && meteor npm run test
